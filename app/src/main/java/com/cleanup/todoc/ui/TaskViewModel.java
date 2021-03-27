@@ -12,11 +12,11 @@ import com.cleanup.todoc.repositories.TaskDataRepository;
 import java.util.List;
 import java.util.concurrent.Executor;
 
-public class TaskViewModel extends ViewModel {
+public class TaskViewModel extends ViewModel { //fournit les données
 
     //repositories
-    private final TaskDataRepository taskDataSource;
-    private final ProjectDataRepository projectDataSource;
+    private final TaskDataRepository taskDataRepository;
+    private final ProjectDataRepository projectDataRepository;
     private final Executor executor;//permet l'execution de méthodes en arrière plan
 
     //data
@@ -24,8 +24,8 @@ public class TaskViewModel extends ViewModel {
     private LiveData<List<Project>> currentProject;
 
     public TaskViewModel(TaskDataRepository taskDataSource, ProjectDataRepository projectDataSource, Executor executor){
-        this.taskDataSource = taskDataSource;
-        this.projectDataSource = projectDataSource;
+        this.taskDataRepository = taskDataSource;
+        this.projectDataRepository = projectDataSource;
         this.executor = executor;
     }
 
@@ -34,24 +34,24 @@ public class TaskViewModel extends ViewModel {
         if (this.currentProject != null){
             return;
         }
-        currentProject = projectDataSource.getProject();
+        currentProject = projectDataRepository.getProject();
     }
 
     //for project
     public LiveData<List<Project>> getProject(){return this.currentProject;}
 
     //for task
-    public LiveData<List<Task>> getTask(){return taskDataSource.getTask();}
+    public LiveData<List<Task>> getTask(){return taskDataRepository.getTask();}
 
     public void createTask(Task task) {
         executor.execute(() -> {
-            taskDataSource.createTask(task);
+            taskDataRepository.createTask(task);
         });
     }
 
     public void deleteTask(Task task) {
         executor.execute(() -> {
-            taskDataSource.deleteTask(task);
+            taskDataRepository.deleteTask(task);
         });
     }
 }
